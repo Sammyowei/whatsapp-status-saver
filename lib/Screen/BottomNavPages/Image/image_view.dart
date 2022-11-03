@@ -1,9 +1,12 @@
 import 'dart:developer';
 import 'dart:io';
-
+import 'package:status_saver/Provider/ad_helper.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_api/flutter_native_api.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+
+const int maxFailedLoadAtempts = 3;
 
 class ImageView extends StatefulWidget {
   final String? imagePath;
@@ -14,6 +17,10 @@ class ImageView extends StatefulWidget {
 }
 
 class _ImageViewState extends State<ImageView> {
+  int _interstitialLoadAttempts = 0;
+
+  InterstitialAd? _interstitialAd;
+
   ///list of buttons
   List<Widget> buttonsList = const [
     Icon(
@@ -30,15 +37,69 @@ class _ImageViewState extends State<ImageView> {
     ),
   ];
 
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+          _interstitialLoadAttempts = 0;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          _interstitialLoadAttempts += 1;
+          _interstitialAd = null;
+          if (_interstitialLoadAttempts >= maxFailedLoadAtempts) {
+            _createInterstitialAd();
+          }
+        },
+      ),
+    );
+  }
+
+  Future<void> _showInterstitialAd() async {
+    if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+          onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        ad.dispose();
+        _createInterstitialAd();
+      }, onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        ad.dispose();
+        _createInterstitialAd();
+      });
+      _interstitialAd!.show();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _createInterstitialAd();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _interstitialAd?.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey,
-          image: DecorationImage(
-              fit: BoxFit.cover, image: FileImage(File(widget.imagePath!))),
+      body: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey,
+            image: DecorationImage(
+              fit: BoxFit.contain,
+              image: FileImage(
+                File(widget.imagePath!),
+              ),
+            ),
+          ),
         ),
       ),
       floatingActionButton: Padding(
@@ -50,6 +111,11 @@ class _ImageViewState extends State<ImageView> {
                 backgroundColor: Colors.green,
                 heroTag: "$index",
                 onPressed: () async {
+                  await _showInterstitialAd();
+
+                  Future.delayed(
+                    const Duration(seconds: 6),
+                  );
                   switch (index) {
                     case 0:
                       log("download image");

@@ -5,7 +5,11 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_api/flutter_native_api.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:status_saver/Provider/ad_helper.dart';
 import 'package:video_player/video_player.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+const int maxFailedLoadAtempts = 3;
 
 class VideoView extends StatefulWidget {
   final String? videoPath;
@@ -16,23 +20,46 @@ class VideoView extends StatefulWidget {
 }
 
 class _VideoViewState extends State<VideoView> {
-  ///list of buttons
-  List<Widget> buttonsList = const [
-    Icon(
-      Icons.download,
-      color: Colors.white,
-    ),
-    Icon(
-      Icons.share,
-      color: Colors.white,
-    ),
-  ];
+  int _interstitialLoadAttempts = 0;
+  InterstitialAd? _interstitialAd;
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+          _interstitialLoadAttempts = 0;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          _interstitialLoadAttempts += 1;
+          _interstitialAd = null;
+          if (_interstitialLoadAttempts >= maxFailedLoadAtempts) {
+            _createInterstitialAd();
+          }
+        },
+      ),
+    );
+  }
 
-  ChewieController? _chewieController;
+  Future<void> _showInterstitialAd() async {
+    if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+          onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        ad.dispose();
+        _createInterstitialAd();
+      }, onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        ad.dispose();
+        _createInterstitialAd();
+      });
+      _interstitialAd!.show();
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    _createInterstitialAd();
 
     _chewieController = ChewieController(
         videoPlayerController: VideoPlayerController.file(
@@ -50,11 +77,26 @@ class _VideoViewState extends State<VideoView> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
+
+    _interstitialAd?.dispose();
     _chewieController!.pause();
     _chewieController!.dispose();
   }
+
+  ///list of buttons
+  List<Widget> buttonsList = const [
+    Icon(
+      Icons.download,
+      color: Colors.white,
+    ),
+    Icon(
+      Icons.share,
+      color: Colors.white,
+    ),
+  ];
+
+  ChewieController? _chewieController;
 
   @override
   Widget build(BuildContext context) {
@@ -69,15 +111,17 @@ class _VideoViewState extends State<VideoView> {
               return FloatingActionButton(
                 backgroundColor: Colors.green,
                 heroTag: "$index",
-                onPressed: () {
+                onPressed: () async {
+                  await _showInterstitialAd();
                   switch (index) {
                     case 0:
                       log("download video");
-                      ImageGallerySaver.saveFile(widget.videoPath!)
-                          .then((value) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Video Saved")));
-                      });
+                      ImageGallerySaver.saveFile(widget.videoPath!).then(
+                        (value) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Video Saved")));
+                        },
+                      );
                       break;
 
                     case 1:

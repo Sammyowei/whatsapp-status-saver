@@ -20,17 +20,22 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 2), () {
       Navigator.pushAndRemoveUntil(
           context,
-          CupertinoPageRoute(builder: (_) => const MainActivity()),
+          CupertinoPageRoute(builder: (_) => const HomePage()),
           (route) => false);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: FlutterLogo(),
+    return Scaffold(
+        body: Center(
+      child: Column(
+        children: const [
+          Image(
+            image: AssetImage('assets/whatsapp_status_saver_logo.webp'),
+          ),
+        ],
       ),
-    );
+    ));
   }
 }

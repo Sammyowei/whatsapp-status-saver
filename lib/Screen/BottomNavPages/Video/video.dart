@@ -3,10 +3,14 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:status_saver/Provider/ad_helper.dart';
 import 'package:status_saver/Provider/getStatusProvider.dart';
 import 'package:status_saver/Screen/BottomNavPages/Image/image_view.dart';
 import 'package:status_saver/Screen/BottomNavPages/Video/video_view.dart';
 import 'package:status_saver/Utils/getThumbnails.dart';
+
+const int maxFailedLoadAtempts = 3;
 
 class VideoHomePage extends StatefulWidget {
   const VideoHomePage({Key? key}) : super(key: key);
@@ -16,7 +20,80 @@ class VideoHomePage extends StatefulWidget {
 }
 
 class _VideoHomePageState extends State<VideoHomePage> {
+  int _interstitialLoadAttempts = 0;
+
+  late BannerAd _inlineBannerAd;
+  InterstitialAd? _interstitialAd;
+  bool _isInlineBannerAdLoaded = false;
   bool _isFetched = false;
+
+  void _createInlineBannerAd() {
+    _inlineBannerAd = BannerAd(
+      size: AdSize.fullBanner,
+      adUnitId: AdHelper.bannerAdUnitId,
+      listener: BannerAdListener(
+        onAdLoaded: (_) {
+          setState(() {
+            _isInlineBannerAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: ((ad, error) {
+          ad.dispose();
+        }),
+      ),
+      request: const AdRequest(),
+    );
+    _inlineBannerAd.load();
+  }
+
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: AdHelper.interstitialAdUnitId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+          _interstitialLoadAttempts = 0;
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          _interstitialLoadAttempts += 1;
+          _interstitialAd = null;
+          if (_interstitialLoadAttempts >= maxFailedLoadAtempts) {
+            _createInterstitialAd();
+          }
+        },
+      ),
+    );
+  }
+
+  Future<void> _showInterstitialAd() async {
+    if (_interstitialAd != null) {
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+          onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        ad.dispose();
+        _createInterstitialAd();
+      }, onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        ad.dispose();
+        _createInterstitialAd();
+      });
+      _interstitialAd!.show();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _createInlineBannerAd();
+    _createInterstitialAd();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _inlineBannerAd.dispose();
+    _interstitialAd?.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,29 +106,52 @@ class _VideoHomePageState extends State<VideoHomePage> {
             });
           }
           return file.isWhatsappAvailable == false
-              ? const Center(
-                  child: Text("Whatsapp not available"),
-                )
+              ? Container(
+                  color: Colors.black.withOpacity(0.7),
+                  child: const Center(
+                    child: Text('WhatsApp is not Available'),
+                  ))
               : file.getVideos.isEmpty
-                  ? const Center(
-                      child: Text("No Video available"),
+                  ? Container(
+                      color: Colors.black.withOpacity(0.7),
+                      child: const Center(
+                        child: Text("No Video available"),
+                      ),
                     )
                   : Container(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.only(
+                        top: 10,
+                        bottom: 10,
+                        right: 5,
+                        left: 5,
+                      ),
                       child: GridView(
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 8,
-                                mainAxisSpacing: 8),
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 3,
+                          mainAxisSpacing: 3,
+                        ),
                         children: List.generate(file.getVideos.length, (index) {
+                          // if (_isInlineBannerAdLoaded && index % 4 == 0) {
+                          //   return Container(
+                          //     padding: const EdgeInsets.only(
+                          //       bottom: 10,
+                          //       top: 10,
+                          //     ),
+                          //     width: _inlineBannerAd.size.width.toDouble(),
+                          //     height: _inlineBannerAd.size.height.toDouble(),
+                          //     child: AdWidget(ad: _inlineBannerAd),
+                          //   );
+                          // }
                           final data = file.getVideos[index];
                           return FutureBuilder<String>(
                               future: getThumbnail(data.path),
                               builder: (context, snapshot) {
                                 return snapshot.hasData
                                     ? GestureDetector(
-                                        onTap: () {
+                                        onTap: () async {
+                                          await _showInterstitialAd();
                                           Navigator.push(
                                             context,
                                             CupertinoPageRoute(
@@ -70,9 +170,10 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                   BorderRadius.circular(10)),
                                         ),
                                       )
-                                    : const Center(
+                                    : Center(
                                         child: CircularProgressIndicator(
-                                            color: Colors.green),
+                                            color:
+                                                Colors.black.withOpacity(0.7)),
                                       );
                               });
                         }),
