@@ -22,25 +22,25 @@ class _ImageViewState extends State<ImageView> {
   InterstitialAd? _interstitialAd;
 
   ///list of buttons
-  List<Widget> buttonsList = const [
+  List<Widget> buttonsList = [
     Icon(
       Icons.download,
-      color: Colors.white,
+      color: Colors.black.withOpacity(0.7),
     ),
     Icon(
       Icons.print,
-      color: Colors.white,
+      color: Colors.black.withOpacity(0.7),
     ),
     Icon(
       Icons.share,
-      color: Colors.white,
+      color: Colors.black.withOpacity(0.7),
     ),
   ];
 
   void _createInterstitialAd() {
     InterstitialAd.load(
       adUnitId: AdHelper.interstitialAdUnitId,
-      request: AdRequest(),
+      request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: (InterstitialAd ad) {
           _interstitialAd = ad;
@@ -111,22 +111,19 @@ class _ImageViewState extends State<ImageView> {
                 backgroundColor: Colors.green,
                 heroTag: "$index",
                 onPressed: () async {
-                  await _showInterstitialAd();
-
-                  Future.delayed(
-                    const Duration(seconds: 6),
-                  );
                   switch (index) {
                     case 0:
                       log("download image");
                       ImageGallerySaver.saveFile(widget.imagePath!)
-                          .then((value) {
+                          .then((value) async {
+                        await _showInterstitialAd();
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text("Image Saved")));
                       });
                       break;
                     case 1:
                       log("Print");
+                      await _showInterstitialAd();
                       FlutterNativeApi.printImage(
                           widget.imagePath!, widget.imagePath!.split("/").last);
                       break;

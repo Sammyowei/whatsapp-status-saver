@@ -112,12 +112,12 @@ class _VideoViewState extends State<VideoView> {
                 backgroundColor: Colors.green,
                 heroTag: "$index",
                 onPressed: () async {
-                  await _showInterstitialAd();
                   switch (index) {
                     case 0:
                       log("download video");
                       ImageGallerySaver.saveFile(widget.videoPath!).then(
-                        (value) {
+                        (value) async {
+                          await _showInterstitialAd();
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text("Video Saved")));
                         },

@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:status_saver/Provider/ad_helper.dart';
 import 'package:status_saver/Provider/getStatusProvider.dart';
-import 'package:status_saver/Screen/BottomNavPages/Image/image_view.dart';
 import 'package:status_saver/Screen/BottomNavPages/Video/video_view.dart';
 import 'package:status_saver/Utils/getThumbnails.dart';
 

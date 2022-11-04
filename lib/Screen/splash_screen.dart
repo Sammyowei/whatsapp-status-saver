@@ -29,12 +29,12 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
-      child: Column(
-        children: const [
-          Image(
-            image: AssetImage('assets/whatsapp.png'),
-          ),
-        ],
+      child: Container(
+        height: 150,
+        width: 150,
+        child: const Image(
+          image: AssetImage("assets/whatsapp.png"),
+        ),
       ),
     ));
   }
