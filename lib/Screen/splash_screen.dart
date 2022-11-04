@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
       child: Column(
         children: const [
           Image(
-            image: AssetImage('assets/whatsapp_status_saver_logo.webp'),
+            image: AssetImage('assets/whatsapp.png'),
           ),
         ],
       ),
