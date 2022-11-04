@@ -10,6 +10,7 @@ import 'package:status_saver/Screen/BottomNavPages/Image/image_view.dart';
 import '../../../Provider/ad_helper.dart';
 
 const int maxFailedLoadAtempts = 3;
+const int _maxLoadAttempt = 3;
 
 class ImageHomePage extends StatefulWidget {
   const ImageHomePage({Key? key}) : super(key: key);
@@ -20,6 +21,7 @@ class ImageHomePage extends StatefulWidget {
 
 class _ImageHomePageState extends State<ImageHomePage> {
   int _interstitialLoadAttempts = 0;
+  int _loadInterstitialads = 0;
 
   late BannerAd _inlineBannerAd;
   InterstitialAd? _interstitialAd;
