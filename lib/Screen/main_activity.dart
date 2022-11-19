@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import 'package:status_saver/Provider/ad_helper.dart';
 import 'package:status_saver/Provider/bottom_nav_provider.dart';
 import 'package:status_saver/Screen/BottomNavPages/Image/image.dart';
 import 'package:status_saver/Screen/BottomNavPages/Video/video.dart';
+import 'package:status_saver/Screen/settings/setting_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -73,16 +75,28 @@ class _HomePageState extends State<HomePage> {
               ]
             : null,
         appBar: AppBar(
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const MySettingPage()));
+                  },
+                  icon: const Icon(Icons.settings)),
+              const SizedBox(
+                width: 10.00,
+              )
+            ],
             elevation: 0,
             title: const Text(
-              "WA Saver",
+              "WhatsApp Status Saver",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             )),
         body: pages[nav.currentIndex],
         bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: Colors.black.withOpacity(0.7),
             elevation: 0,
             onTap: (value) {
               nav.changeIndex(value);

@@ -10,6 +10,8 @@ import 'package:status_saver/Screen/BottomNavPages/Video/video_view.dart';
 import 'package:status_saver/Utils/getThumbnails.dart';
 
 const int maxFailedLoadAtempts = 3;
+int _maxLoadAttempt = 2;
+const _totalLoadAttempt = 1;
 
 class VideoHomePage extends StatefulWidget {
   const VideoHomePage({Key? key}) : super(key: key);
@@ -106,13 +108,13 @@ class _VideoHomePageState extends State<VideoHomePage> {
           }
           return file.isWhatsappAvailable == false
               ? Container(
-                  color: Colors.black.withOpacity(0.7),
+                  color: Colors.black,
                   child: const Center(
                     child: Text('WhatsApp is not Available'),
                   ))
               : file.getVideos.isEmpty
                   ? Container(
-                      color: Colors.black.withOpacity(0.7),
+                      color: Colors.black,
                       child: const Center(
                         child: Text("No Video available"),
                       ),
@@ -150,7 +152,12 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                 return snapshot.hasData
                                     ? GestureDetector(
                                         onTap: () async {
-                                          await _showInterstitialAd();
+                                          _maxLoadAttempt = 0;
+                                          _maxLoadAttempt += 1;
+                                          if (_maxLoadAttempt ==
+                                              _totalLoadAttempt) {
+                                            await _showInterstitialAd();
+                                          }
                                           Navigator.push(
                                             context,
                                             CupertinoPageRoute(

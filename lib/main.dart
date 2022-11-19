@@ -29,11 +29,11 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(
             brightness: Brightness.dark,
-            bottomNavigationBarTheme: BottomNavigationBarThemeData(
-                selectedItemColor: Colors.green,
-                backgroundColor: Colors.black.withOpacity(0.7)),
-            appBarTheme: AppBarTheme(
-                backgroundColor: Colors.black.withOpacity(0.7),
+            bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+              selectedItemColor: Colors.green,
+            ),
+            appBarTheme: const AppBarTheme(
+                backgroundColor: Colors.transparent,
                 foregroundColor: Colors.white)),
         debugShowCheckedModeBanner: false,
         home: const SplashScreen(),

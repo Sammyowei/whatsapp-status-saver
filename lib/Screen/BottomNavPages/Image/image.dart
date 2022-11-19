@@ -10,7 +10,8 @@ import 'package:status_saver/Screen/BottomNavPages/Image/image_view.dart';
 import '../../../Provider/ad_helper.dart';
 
 const int maxFailedLoadAtempts = 3;
-const int _maxLoadAttempt = 3;
+int _maxLoadAttempt = 2;
+const _totalLoadAttempt = 1;
 
 class ImageHomePage extends StatefulWidget {
   const ImageHomePage({Key? key}) : super(key: key);
@@ -109,12 +110,12 @@ class _ImageHomePageState extends State<ImageHomePage> {
           }
           return file.isWhatsappAvailable == false
               ? Container(
-                  color: Colors.black.withOpacity(0.7),
+                  color: Colors.black,
                   child: const Center(child: Text('Whatsapp is not available')),
                 )
               : file.getImages.isEmpty
                   ? Container(
-                      color: Colors.black.withOpacity(0.7),
+                      color: Colors.black,
                       child: const Center(
                         child: Text(
                           "No image available",
@@ -122,7 +123,6 @@ class _ImageHomePageState extends State<ImageHomePage> {
                       ),
                     )
                   : Container(
-                      color: Colors.black.withOpacity(0.7),
                       padding: const EdgeInsets.only(
                         top: 10,
                         bottom: 10,
@@ -139,21 +139,29 @@ class _ImageHomePageState extends State<ImageHomePage> {
                           final data = file.getImages[index];
                           return GestureDetector(
                             onTap: () async {
-                              await _showInterstitialAd();
+                              _maxLoadAttempt = 0;
+                              _maxLoadAttempt++;
+                              if (_maxLoadAttempt == _totalLoadAttempt) {
+                                await _showInterstitialAd();
+                              }
                               Navigator.push(
                                 context,
                                 CupertinoPageRoute(
-                                    builder: (_) => ImageView(
-                                          imagePath: data.path,
-                                        )),
+                                  builder: (_) => ImageView(
+                                    imagePath: data.path,
+                                  ),
+                                ),
                               );
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(0.3),
+                                  color: Colors.grey,
                                   image: DecorationImage(
-                                      fit: BoxFit.cover,
-                                      image: FileImage(File(data.path))),
+                                    fit: BoxFit.cover,
+                                    image: FileImage(
+                                      File(data.path),
+                                    ),
+                                  ),
                                   borderRadius: BorderRadius.circular(10)),
                             ),
                           );

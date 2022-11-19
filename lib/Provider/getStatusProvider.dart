@@ -10,11 +10,12 @@ class GetStatusProvider extends ChangeNotifier {
   List<FileSystemEntity> _getVideos = [];
 
   bool _isWhatsappAvailable = false;
-
+  bool _isWhatsappBusinessAvailable = false;
   List<FileSystemEntity> get getImages => _getImages;
   List<FileSystemEntity> get getVideos => _getVideos;
 
   bool get isWhatsappAvailable => _isWhatsappAvailable;
+  bool get isWhatsappBusinessAvailable => _isWhatsappBusinessAvailable;
 
   void getStatus(String ext) async {
     final status = await Permission.storage.request();
@@ -65,13 +66,13 @@ class GetStatusProvider extends ChangeNotifier {
           notifyListeners();
         }
 
-        _isWhatsappAvailable = true;
+        _isWhatsappBusinessAvailable = true;
         notifyListeners();
 
         log(items.toString());
       } else {
         log("No whatsapp found");
-        _isWhatsappAvailable = false;
+        _isWhatsappBusinessAvailable = false;
         notifyListeners();
       }
     }

@@ -30,10 +30,10 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
         body: Center(
       child: Container(
-        height: 150,
-        width: 150,
+        height: 125,
+        width: 125,
         child: const Image(
-          image: AssetImage("assets/whatsapp.png"),
+          image: AssetImage("assets/whatsapp-logo.png"),
         ),
       ),
     ));

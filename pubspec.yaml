@@ -45,6 +45,7 @@ dependencies:
   video_thumbnail: ^0.5.3
   google_mobile_ads: ^2.0.1
   rename: ^2.0.1
+  webview_flutter: ^3.0.4
  
 
 dev_dependencies:
@@ -66,7 +67,7 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/whatsapp.png"
+  image_path: "assets/whatsapp-logo.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
   
 flutter:
