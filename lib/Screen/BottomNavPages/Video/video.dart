@@ -108,18 +108,19 @@ class _VideoHomePageState extends State<VideoHomePage> {
           }
           return file.isWhatsappAvailable == false
               ? Container(
-                  color: Colors.black,
+                  color: Colors.white,
                   child: const Center(
                     child: Text('WhatsApp is not Available'),
                   ))
               : file.getVideos.isEmpty
                   ? Container(
-                      color: Colors.black,
+                      color: Colors.white,
                       child: const Center(
                         child: Text("No Video available"),
                       ),
                     )
                   : Container(
+                      color: Colors.white,
                       padding: const EdgeInsets.only(
                         top: 10,
                         bottom: 10,

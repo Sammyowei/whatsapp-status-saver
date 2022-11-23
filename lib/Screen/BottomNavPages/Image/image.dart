@@ -110,12 +110,12 @@ class _ImageHomePageState extends State<ImageHomePage> {
           }
           return file.isWhatsappAvailable == false
               ? Container(
-                  color: Colors.black,
+                  color: Colors.white,
                   child: const Center(child: Text('Whatsapp is not available')),
                 )
               : file.getImages.isEmpty
                   ? Container(
-                      color: Colors.black,
+                      color: Colors.white,
                       child: const Center(
                         child: Text(
                           "No image available",
@@ -123,6 +123,7 @@ class _ImageHomePageState extends State<ImageHomePage> {
                       ),
                     )
                   : Container(
+                      color: Colors.white,
                       padding: const EdgeInsets.only(
                         top: 10,
                         bottom: 10,

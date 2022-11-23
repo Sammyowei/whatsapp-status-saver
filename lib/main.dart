@@ -28,13 +28,11 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         theme: ThemeData(
-            brightness: Brightness.dark,
+            brightness: Brightness.light,
             bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-              selectedItemColor: Colors.green,
-            ),
+                selectedItemColor: Colors.white, backgroundColor: Colors.green),
             appBarTheme: const AppBarTheme(
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.white)),
+                backgroundColor: Colors.green, foregroundColor: Colors.white)),
         debugShowCheckedModeBanner: false,
         home: const SplashScreen(),
       ),

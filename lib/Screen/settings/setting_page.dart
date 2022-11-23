@@ -68,7 +68,7 @@ class _MySettingPageState extends State<MySettingPage> {
               },
               child: const Text(
                 "Privacy Policy                                                                                                         ",
-                style: TextStyle(color: Colors.white, fontSize: 20),
+                style: TextStyle(color: Colors.black, fontSize: 20),
               )),
           const SizedBox(
             height: 10,
@@ -84,17 +84,16 @@ class _MySettingPageState extends State<MySettingPage> {
               },
               child: const Text(
                 'Cookie Policy                                                       ',
-                style: TextStyle(fontSize: 20, color: Colors.white),
+                style: TextStyle(fontSize: 20, color: Colors.black),
               )),
           const SizedBox(
             height: 100,
           ),
           Center(
             child: Card(
-              color: Colors.grey.shade900,
-              elevation: 5,
+              color: Colors.white,
+              elevation: 20,
               child: Container(
-                padding: const EdgeInsets.all(5),
                 height: _bannerAd.size.height.toDouble(),
                 width: _bannerAd.size.width.toDouble(),
                 child: AdWidget(ad: _bannerAd),
