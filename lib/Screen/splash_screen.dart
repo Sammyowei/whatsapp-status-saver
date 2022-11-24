@@ -33,6 +33,8 @@ class _SplashScreenState extends State<SplashScreen> {
         height: 125,
         width: 125,
         child: const Image(
+//TODO: Change splashScreen icon [icon].
+
           image: AssetImage("assets/whatsapp-logo.png"),
         ),
       ),

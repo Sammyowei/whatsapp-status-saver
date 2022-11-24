@@ -62,17 +62,20 @@ class _VideoViewState extends State<VideoView> {
     _createInterstitialAd();
 
     _chewieController = ChewieController(
-        videoPlayerController: VideoPlayerController.file(
-          File(widget.videoPath!),
-        ),
-        autoInitialize: true,
-        autoPlay: true,
-        looping: true,
-        errorBuilder: ((context, errorMessage) {
-          return Center(
-            child: Text(errorMessage),
-          );
-        }));
+      videoPlayerController: VideoPlayerController.file(
+        File(widget.videoPath!),
+      ),
+      autoInitialize: true,
+      autoPlay: true,
+      looping: true,
+      aspectRatio: 1 / 1,
+      allowFullScreen: true,
+      errorBuilder: ((context, errorMessage) {
+        return Center(
+          child: Text(errorMessage),
+        );
+      }),
+    );
   }
 
   @override
@@ -117,9 +120,13 @@ class _VideoViewState extends State<VideoView> {
                       log("download video");
                       ImageGallerySaver.saveFile(widget.videoPath!).then(
                         (value) async {
-                          await _showInterstitialAd();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Video Saved")));
+                          await _showInterstitialAd().whenComplete(
+                            () => ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Video Saved"),
+                              ),
+                            ),
+                          );
                         },
                       );
                       break;

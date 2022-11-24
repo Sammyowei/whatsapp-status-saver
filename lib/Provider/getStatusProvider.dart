@@ -10,12 +10,12 @@ class GetStatusProvider extends ChangeNotifier {
   List<FileSystemEntity> _getVideos = [];
 
   bool _isWhatsappAvailable = false;
-  bool _isWhatsappBusinessAvailable = false;
+
   List<FileSystemEntity> get getImages => _getImages;
   List<FileSystemEntity> get getVideos => _getVideos;
 
   bool get isWhatsappAvailable => _isWhatsappAvailable;
-  bool get isWhatsappBusinessAvailable => _isWhatsappBusinessAvailable;
+  // bool get isWhatsappBusinessAvailable => _isWhatsappBusinessAvailable;
 
   void getStatus(String ext) async {
     final status = await Permission.storage.request();
@@ -28,53 +28,55 @@ class GetStatusProvider extends ChangeNotifier {
 
     if (status.isGranted) {
       final whatsappBusinessDirectory =
-          Directory(AppConstants.WHATSAPP_BUSINESS_PATH);
-      final whatsappDirectory = Directory(AppConstants.WHATSAPP_PATH);
+          Directory(AppConstants.whatsappBusinessPath);
+
+      final whatsappDirectory = Directory(AppConstants.whatsappPath);
+
       if (whatsappDirectory.existsSync()) {
-        final items = whatsappDirectory.listSync();
+        final whatsappStatus = whatsappDirectory.listSync();
 
         if (ext == ".mp4") {
-          _getVideos =
-              items.where((element) => element.path.endsWith(".mp4")).toList();
+          _getVideos = whatsappStatus
+              .where((element) => element.path.endsWith(".mp4"))
+              .toList();
           notifyListeners();
         } else {
-          _getImages =
-              items.where((element) => element.path.endsWith(".jpg")).toList();
+          _getImages = whatsappStatus
+              .where((element) => element.path.endsWith(".jpg"))
+              .toList();
           notifyListeners();
         }
 
         _isWhatsappAvailable = true;
         notifyListeners();
 
-        log(items.toString());
-      } else {
-        log("No whatsapp found");
-        _isWhatsappAvailable = false;
-        notifyListeners();
+        log(whatsappStatus.toString());
       }
 
       if (whatsappBusinessDirectory.existsSync()) {
-        final items = whatsappBusinessDirectory.listSync();
+        final whatsappBusinessStatus = whatsappBusinessDirectory.listSync();
 
         if (ext == ".mp4") {
-          _getVideos =
-              items.where((element) => element.path.endsWith(".mp4")).toList();
+          _getVideos = whatsappBusinessStatus
+              .where((element) => element.path.endsWith(".mp4"))
+              .toList();
           notifyListeners();
         } else {
-          _getImages =
-              items.where((element) => element.path.endsWith(".jpg")).toList();
+          _getImages = whatsappBusinessStatus
+              .where((element) => element.path.endsWith(".jpg"))
+              .toList();
           notifyListeners();
         }
 
-        _isWhatsappBusinessAvailable = true;
+        _isWhatsappAvailable = true;
         notifyListeners();
 
-        log(items.toString());
-      } else {
-        log("No whatsapp found");
-        _isWhatsappBusinessAvailable = false;
-        notifyListeners();
+        log(whatsappBusinessStatus.toString());
       }
+    } else {
+      log('No whatsapp found');
+      _isWhatsappAvailable = false;
+      notifyListeners();
     }
   }
 }

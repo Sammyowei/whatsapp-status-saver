@@ -1,7 +1,7 @@
 class AppConstants {
-  static String WHATSAPP_BUSINESS_PATH =
+  static String whatsappBusinessPath =
       "/storage/emulated/0/Android/media/com.whatsapp.w4b/WhatsApp Business/Media/.Statuses";
 
-  static String WHATSAPP_PATH =
+  static String whatsappPath =
       "/storage/emulated/0/Android/media/com.whatsapp/WhatsApp/Media/.Statuses";
 }

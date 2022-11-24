@@ -157,15 +157,18 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                           _maxLoadAttempt += 1;
                                           if (_maxLoadAttempt ==
                                               _totalLoadAttempt) {
-                                            await _showInterstitialAd();
+                                            await _showInterstitialAd()
+                                                .whenComplete(
+                                                    () => Navigator.push(
+                                                          context,
+                                                          CupertinoPageRoute(
+                                                              builder: (_) =>
+                                                                  VideoView(
+                                                                    videoPath:
+                                                                        data.path,
+                                                                  )),
+                                                        ));
                                           }
-                                          Navigator.push(
-                                            context,
-                                            CupertinoPageRoute(
-                                                builder: (_) => VideoView(
-                                                      videoPath: data.path,
-                                                    )),
-                                          );
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(

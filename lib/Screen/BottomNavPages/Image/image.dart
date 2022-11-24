@@ -143,20 +143,21 @@ class _ImageHomePageState extends State<ImageHomePage> {
                               _maxLoadAttempt = 0;
                               _maxLoadAttempt++;
                               if (_maxLoadAttempt == _totalLoadAttempt) {
-                                await _showInterstitialAd();
-                              }
-                              Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (_) => ImageView(
-                                    imagePath: data.path,
+                                await _showInterstitialAd().whenComplete(
+                                  () => Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (_) => ImageView(
+                                        imagePath: data.path,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                              }
                             },
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: Colors.grey,
+                                  color: Colors.white,
                                   image: DecorationImage(
                                     fit: BoxFit.cover,
                                     image: FileImage(

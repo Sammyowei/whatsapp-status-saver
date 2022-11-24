@@ -6,7 +6,7 @@ import 'package:status_saver/Provider/bottom_nav_provider.dart';
 import 'package:status_saver/Provider/getStatusProvider.dart';
 import 'package:status_saver/Screen/splash_screen.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarBrightness: Brightness.light,
@@ -38,4 +38,7 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-}
+} 
+
+ //TODO: Change app Icon by running $flutter pub run flutter_launcher_icons:main
+ // TODO: to Change appBundleId run flutter pub global run rename --bundleId <bundleId>
